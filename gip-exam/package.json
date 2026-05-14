@@ -1,14 +1,18 @@
+```json
 {
   "name": "gip-rwanda-ai-architect-exam",
   "version": "1.0.0",
   "description": "GiP Rwanda AI Architect Certification Examination Platform",
   "private": true,
+  "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "vercel dev",
+    "start": "vercel dev",
     "deploy": "vercel --prod"
   },
   "dependencies": {}
 }
+```

@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GiP Rwanda — AI Architect Certification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   DESIGN: Dark institutional — deep navy, gold,
+   Rwanda-green accents. Authoritative & refined.
+═══════════════════════════════════════════════ */
+:root {
+  --ink:       #080B12;
+  --navy:      #08153A;
+  --blue:      #1740A8;
+  --blue-m:    #2558D4;
+  --blue-glow: rgba(37,88,212,0.2);
+  --gold:      #C49A00;
+  --gold-l:    #FBF3D9;
+  --gold-glow: rgba(196,154,0,0.15);
+  --teal:      #0D9E7A;
+  --teal-l:    #D8F5EE;
+  --rw:        #00A550;
+  --red:       #B52828;
+  --red-l:     #FDEAEA;
+  --gray:      rgba(255,255,255,0.04);
+  --border:    rgba(37,88,212,0.18);
+  --text:      rgba(255,255,255,0.88);
+  --muted:     rgba(255,255,255,0.42);
+  --white:     #fff;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);overflow:hidden}
+
+/* ── BACKGROUND ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 90% 60% at 15% -5%, rgba(23,64,168,0.3) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 45% at 85% 105%, rgba(0,165,80,0.14) 0%,transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(37,88,212,0.05) 0%,transparent 70%);
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(37,88,212,0.035) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(37,88,212,0.035) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 85% 85% at 50% 50%,black 30%,transparent 100%);
+}
+
+/* ── APP SHELL ── */
+.app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh}
+
+/* ══════ TOP BAR ══════ */
+.bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 26px;flex-shrink:0;
+  background:rgba(8,11,18,0.9);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(18px);
+}
+.bar-l{display:flex;align-items:center;gap:12px}
+.emblem{
+  width:38px;height:38px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(140deg,var(--navy),var(--blue));
+  border:1px solid rgba(37,88,212,0.45);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--gold);
+  box-shadow:0 0 22px var(--blue-glow);
+}
+.bar-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;letter-spacing:.3px}
+.bar-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.bar-r{display:flex;align-items:center;gap:16px}
+
+/* Pip strip */
+.pips{display:flex;gap:3px;align-items:center}
+.pip{width:16px;height:5px;border-radius:3px;background:rgba(255,255,255,0.08);transition:background .4s,transform .3s}
+.pip.done{background:var(--teal)}
+.pip.active{background:var(--gold);transform:scaleY(1.5)}
+.pip.fail{background:var(--red)}
+
+/* Timer */
+.timer{
+  font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:500;
+  padding:7px 15px;border-radius:8px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  color:var(--text);min-width:96px;text-align:center;
+  transition:color .3s,border-color .3s;
+}
+.timer.warn{color:var(--gold);border-color:rgba(196,154,0,.4)}
+.timer.crit{color:#ff5959;border-color:rgba(255,89,89,.4);animation:crit 1s infinite}
+@keyframes crit{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* Proctor badge */
+.proctor{
+  display:flex;align-items:center;gap:6px;padding:6px 12px;
+  border-radius:20px;background:rgba(13,158,122,.1);
+  border:1px solid rgba(13,158,122,.25);font-size:12px;color:#4ecba0;
+}
+.pdot{width:7px;height:7px;border-radius:50%;background:#4ecba0;animation:pdot 2.2s infinite}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.65)}}
+
+/* ══════ WARNING STRIP ══════ */
+.warn-strip{
+  display:none;padding:7px 26px;
+  background:rgba(181,40,40,.15);border-bottom:1px solid rgba(181,40,40,.3);
+  font-size:12px;color:#ff8a8a;align-items:center;gap:8px;flex-shrink:0;
+}
+
+/* ══════ BODY SPLIT ══════ */
+.split{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* ══════ SIDEBAR ══════ */
+.sb{
+  width:252px;flex-shrink:0;
+  background:rgba(8,11,18,.7);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.sb-sec{padding:16px 14px;border-bottom:1px solid var(--border)}
+.sb-lbl{font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+
+/* Ring */
+.ring-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.ring-svg{transform:rotate(-90deg);flex-shrink:0}
+.rb{fill:none;stroke:rgba(255,255,255,.06);stroke-width:4.5}
+.rf{fill:none;stroke:url(#rg);stroke-width:4.5;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.rn{font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:500}
+.rs{font-size:11px;color:var(--muted)}
+
+.stat{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:3px 0}
+.stat strong{color:var(--text)}
+
+/* Module list */
+.ml{flex:1;overflow-y:auto;padding:8px 12px}
+.ml::-webkit-scrollbar{width:3px}
+.ml::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+.mi{
+  padding:7px 9px;border-radius:8px;margin-bottom:2px;
+  display:flex;align-items:center;gap:8px;cursor:default;
+  transition:background .2s;
+}
+.mi.active{background:rgba(37,88,212,.14);border:1px solid rgba(37,88,212,.2)}
+.mi.done{background:rgba(13,158,122,.07)}
+.mi.fail{background:rgba(181,40,40,.07)}
+.mn{
+  width:21px;height:21px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;
+  background:rgba(255,255,255,.05);color:var(--muted);
+  transition:background .3s,color .3s;
+}
+.mn.active{background:var(--blue);color:#fff}
+.mn.done{background:var(--teal);color:#fff}
+.mn.fail{background:var(--red);color:#fff}
+.mname{font-size:12px;flex:1;line-height:1.3;color:rgba(255,255,255,.58)}
+.mi.active .mname{color:var(--text);font-weight:500}
+.mscore{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500}
+.mscore.p{color:var(--teal)}.mscore.f{color:var(--red)}
+
+.sb-foot{padding:13px 14px;border-top:1px solid var(--border)}
+.sname{font-size:14px;font-weight:600;margin-bottom:1px}
+.sid{font-size:11px;color:var(--muted)}
+
+/* ══════ CHAT PANEL ══════ */
+.chat{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+
+.phase-row{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 22px;flex-shrink:0;
+  background:rgba(37,88,212,.05);border-bottom:1px solid var(--border);
+}
+.ph-icon{
+  width:26px;height:26px;border-radius:6px;
+  background:var(--blue);display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.ph-t strong{font-size:13px}
+.ph-t span{font-size:12px;color:var(--muted);margin-left:5px}
+.ph-cnt{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--muted);background:rgba(255,255,255,.04);
+  padding:3px 10px;border-radius:10px;
+}
+
+/* Messages */
+.msgs{
+  flex:1;overflow-y:auto;padding:22px;
+  display:flex;flex-direction:column;gap:14px;
+  scroll-behavior:smooth;min-height:0;
+}
+.msgs::-webkit-scrollbar{width:4px}
+.msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:2px}
+
+.msg{display:flex;gap:10px;max-width:87%;animation:min .3s ease both}
+@keyframes min{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.msg.ai{align-self:flex-start}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+
+.av{
+  width:33px;height:33px;border-radius:50%;flex-shrink:0;margin-top:3px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;letter-spacing:.4px;
+  font-family:'Cormorant Garamond',serif;
+}
+.ai .av{background:linear-gradient(140deg,var(--navy),var(--blue));color:var(--gold);border:1px solid rgba(37,88,212,.35)}
+.user .av{background:linear-gradient(140deg,#085041,var(--teal));color:#fff}
+
+.bub{padding:12px 16px;border-radius:15px;font-size:14px;line-height:1.75;max-width:100%}
+.ai .bub{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-top-left-radius:4px;color:var(--text);
+}
+.user .bub{
+  background:linear-gradient(140deg,var(--blue),#1a50c4);
+  border-top-right-radius:4px;color:#fff;
+}
+.bub strong{color:var(--gold)}
+.bub em{color:rgba(255,255,255,.65)}
+.bub .mtag{
+  display:inline-block;background:rgba(196,154,0,.14);color:var(--gold);
+  font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;
+  padding:2px 8px;border-radius:4px;margin-bottom:7px;
+}
+.bub .rwtag{
+  display:inline-block;background:rgba(0,165,80,.12);color:#4ecba0;
+  font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;
+  padding:2px 8px;border-radius:4px;margin-left:5px;margin-bottom:7px;
+}
+.bub p{margin-bottom:6px}
+.bub p:last-child{margin-bottom:0}
+.bub ul,.bub ol{margin:6px 0 6px 18px;line-height:2}
+
+/* Typing */
+.tdots{display:flex;gap:5px;padding:13px 16px;align-items:center}
+.td{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:td 1.3s infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* ══════ INPUT ══════ */
+.inp-row{
+  display:flex;gap:10px;align-items:flex-end;
+  padding:14px 22px;flex-shrink:0;
+  background:rgba(8,11,18,.85);border-top:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.inp-w{flex:1;position:relative}
+textarea.ci{
+  width:100%;padding:12px 48px 12px 15px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);border-radius:13px;
+  font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);
+  resize:none;min-height:48px;max-height:120px;
+  outline:none;line-height:1.5;transition:border-color .2s,background .2s;
+}
+textarea.ci::placeholder{color:var(--muted)}
+textarea.ci:focus{border-color:rgba(37,88,212,.5);background:rgba(37,88,212,.04)}
+textarea.ci:disabled{opacity:.35;cursor:not-allowed}
+.cc{position:absolute;right:11px;bottom:9px;font-size:11px;color:var(--muted)}
+
+.sbtn{
+  width:48px;height:48px;border-radius:13px;flex-shrink:0;
+  background:linear-gradient(140deg,var(--blue),#1a50c4);
+  border:none;cursor:pointer;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(37,88,212,.35);
+  transition:all .2s;
+}
+.sbtn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,88,212,.5)}
+.sbtn:disabled{background:rgba(255,255,255,.07);box-shadow:none;cursor:not-allowed;transform:none}
+.sbtn svg{width:17px;height:17px}
+
+/* ══════ OVERLAYS ══════ */
+.ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.88);
+  backdrop-filter:blur(14px);z-index:400;
+  display:flex;align-items:center;justify-content:center;padding:18px;
+}
+.card{
+  background:linear-gradient(160deg,#0c1020 0%,#111828 100%);
+  border:1px solid var(--border);border-radius:22px;
+  padding:38px;max-width:490px;width:100%;
+  box-shadow:0 40px 100px rgba(0,0,0,.65),0 0 0 1px rgba(37,88,212,.08) inset;
+  animation:ci .45s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes ci{from{opacity:0;transform:scale(.86)translateY(18px)}to{opacity:1;transform:none}}
+
+/* Rwanda flag bar */
+.rwbar{height:3px;background:linear-gradient(90deg,#20603D 0%,#FAD201 50%,#00A550 100%);margin-bottom:26px;border-radius:2px;opacity:.5}
+
+.card-emb{
+  width:58px;height:58px;border-radius:15px;margin:0 auto 16px;
+  background:linear-gradient(140deg,var(--navy),var(--blue));
+  border:1px solid rgba(37,88,212,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:700;color:var(--gold);
+  box-shadow:0 0 28px var(--blue-glow);
+}
+.card h2{
+  font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:700;
+  text-align:center;color:#fff;margin-bottom:5px;
+}
+.card .csub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:22px}
+.fl{margin-bottom:14px}
+.fl label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;display:block;margin-bottom:5px}
+.fl input{
+  width:100%;padding:11px 13px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;
+  font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);outline:none;
+  transition:border-color .2s;
+}
+.fl input:focus{border-color:rgba(37,88,212,.5)}
+.fl input::placeholder{color:var(--muted)}
+
+.rules{
+  background:rgba(37,88,212,.07);border:1px solid rgba(37,88,212,.15);
+  border-radius:10px;padding:13px 15px;margin:14px 0;
+}
+.rl-hd{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.7px;text-transform:uppercase;margin-bottom:8px}
+.rl{font-size:12.5px;color:rgba(255,255,255,.6);padding:3px 0;display:flex;gap:8px}
+.rl::before{content:'›';color:var(--gold);font-weight:700;flex-shrink:0}
+
+.consent-row{display:flex;align-items:flex-start;gap:9px;margin:11px 0;font-size:13px;color:var(--muted)}
+.consent-row input{margin-top:3px;accent-color:var(--blue);flex-shrink:0}
+
+.go-btn{
+  width:100%;padding:13px;margin-top:10px;
+  background:linear-gradient(140deg,var(--navy),var(--blue));
+  color:#fff;border:none;border-radius:12px;
+  font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;
+  box-shadow:0 4px 20px rgba(37,88,212,.4);transition:all .2s;letter-spacing:.3px;
+}
+.go-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(37,88,212,.52)}
+.go-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ══════ ERROR NOTICE ══════ */
+.err-note{
+  background:rgba(181,40,40,.12);border:1px solid rgba(181,40,40,.25);
+  border-radius:8px;padding:10px 13px;margin-top:10px;
+  font-size:12.5px;color:#ff8a8a;display:none;
+}
+
+/* ══════ RESULTS ══════ */
+.res-card{max-width:620px;max-height:88vh;overflow-y:auto}
+.res-card::-webkit-scrollbar{width:4px}
+.res-card::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+
+.gc{
+  width:94px;height:94px;border-radius:50%;margin:0 auto 12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 8px 28px rgba(0,0,0,.45);
+  font-family:'JetBrains Mono',monospace;
+}
+.gc-p{background:linear-gradient(140deg,#085041,var(--teal))}
+.gc-f{background:linear-gradient(140deg,#7a1515,var(--red))}
+.gc-s{font-size:28px;font-weight:700;color:#fff;line-height:1}
+.gc-l{font-size:10px;color:rgba(255,255,255,.65);margin-top:2px}
+.verdict{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;text-align:center;margin:8px 0 4px}
+.vp{color:var(--teal)}.vf{color:var(--red)}
+.gtag{text-align:center;font-size:13px;color:var(--muted)}
+
+.rb-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:4px 12px;
+  border-radius:12px;font-size:12px;font-weight:600;margin-top:7px;
+}
+.rb-h{background:rgba(13,158,122,.14);color:var(--teal);border:1px solid rgba(13,158,122,.3)}
+.rb-m{background:rgba(196,154,0,.14);color:var(--gold);border:1px solid rgba(196,154,0,.3)}
+.rb-l{background:rgba(181,40,40,.14);color:var(--red);border:1px solid rgba(181,40,40,.3)}
+
+/* Module score grid */
+.msg-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:14px 0}
+.mc{
+  padding:8px 6px;border-radius:7px;text-align:center;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+}
+.mc-n{font-size:9px;color:var(--muted);margin-bottom:2px}
+.mc-s{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}
+.mc.p{border-color:rgba(13,158,122,.25)} .mc.p .mc-s{color:var(--teal)}
+.mc.f{border-color:rgba(181,40,40,.25)}  .mc.f .mc-s{color:var(--red)}
+
+/* JSON block */
+.jblk{
+  background:rgba(0,0,0,.5);border:1px solid rgba(37,88,212,.2);
+  border-radius:9px;padding:13px;margin:12px 0;
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  color:#8bc4ff;overflow-x:auto;white-space:pre;
+  max-height:240px;overflow-y:auto;
+}
+.jblk::-webkit-scrollbar{width:3px}
+.jblk::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+
+/* Certificate */
+.cert{
+  background:linear-gradient(140deg,var(--navy),#0d2060);
+  border:1px solid rgba(196,154,0,.3);border-radius:12px;
+  padding:22px;text-align:center;margin:14px 0;
+  box-shadow:0 0 30px rgba(37,88,212,.18),0 0 60px var(--gold-glow) inset;
+}
+.cert-title{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--gold);margin-bottom:5px}
+.cert-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:#fff}
+.cert-prog{font-size:12px;color:rgba(255,255,255,.65);margin:4px 0}
+.cert-date{font-size:11px;color:var(--muted);margin-top:7px}
+.cert-stars{color:var(--gold);font-size:17px;letter-spacing:5px;margin:7px 0 4px}
+
+/* Action buttons */
+.ract{display:flex;gap:9px;margin-top:16px}
+.rb{flex:1;padding:12px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.rb-pri{background:linear-gradient(140deg,var(--navy),var(--blue));color:#fff}
+.rb-sec{background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);border:1px solid var(--border)}
+.rb:hover{transform:translateY(-1px)}
+
+/* Section labels inside result */
+.res-lbl{font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;margin:14px 0 5px}
+.res-lbl.green{color:var(--teal)}.res-lbl.gold{color:var(--gold)}.res-lbl.muted{color:var(--muted)}
+.res-list{padding-left:17px;font-size:13px;color:rgba(255,255,255,.7);line-height:2.1}
+.rec-box{
+  font-size:13px;color:rgba(255,255,255,.6);
+  padding:11px 14px;background:rgba(37,88,212,.07);
+  border-radius:8px;border-left:3px solid var(--blue);margin:10px 0;
+  line-height:1.6;
+}
+
+/* Loading spinner */
+.spin-wrap{display:flex;align-items:center;gap:10px;padding:12px 16px}
+.spin{
+  width:20px;height:20px;border-radius:50%;
+  border:2.5px solid rgba(255,255,255,.1);
+  border-top-color:var(--blue-m);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ SVG GRADIENT DEF ══════════════════ -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2558D4"/>
+      <stop offset="100%" stop-color="#0D9E7A"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ══════════════════ REGISTRATION ══════════════════ -->
+<div class="ov" id="regOv">
+  <div class="card">
+    <div class="rwbar"></div>
+    <div class="card-emb">GiP</div>
+    <h2>AI Architect Certification</h2>
+    <p class="csub">Global Institute of People · Rwanda National AI Mandate<br>Vision 2050 Proctored Examination</p>
+
+    <div class="fl"><label>Full Name</label><input id="rName" placeholder="Your full legal name" /></div>
+    <div class="fl"><label>Student ID / Email</label><input id="rId" placeholder="ID number or email address" /></div>
+    <div class="fl"><label>Organisation</label><input id="rOrg" placeholder="Company, bank, NGO, ministry…" /></div>
+
+    <div class="rules">
+      <div class="rl-hd">Examination Rules</div>
+      <div class="rl">14 questions total — 13 module questions + 1 Capstone</div>
+      <div class="rl">Every question is a real Rwanda business scenario (Kigali, EAC)</div>
+      <div class="rl">Minimum 80% score required to pass certification</div>
+      <div class="rl">AI Examiner asks one question per module in strict sequence</div>
+      <div class="rl">2-hour time limit · Proctored · Tab switches are logged</div>
+      <div class="rl">Do not refresh or close this window during the exam</div>
+    </div>
+    <div class="consent-row">
+      <input type="checkbox" id="cons" />
+      <span>I confirm my identity, accept the examination rules, and consent to online proctoring of this session.</span>
+    </div>
+    <button class="go-btn" id="goBtn" onclick="startExam()">Begin Certification →</button>
+    <div class="err-note" id="regErr"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ MAIN EXAM UI ══════════════════ -->
+<div class="app" id="appUI" style="display:none">
+
+  <div class="bar">
+    <div class="bar-l">
+      <div class="emblem">GiP</div>
+      <div>
+        <div class="bar-title">AI Architect Certification</div>
+        <div class="bar-sub" id="barSub">Rwanda National AI Mandate · Proctored</div>
+      </div>
+    </div>
+    <div class="bar-r">
+      <div class="pips" id="pipRow"></div>
+      <div class="proctor"><div class="pdot"></div>Proctor Live</div>
+      <div class="timer" id="timerEl">2:00:00</div>
+    </div>
+  </div>
+
+  <div class="warn-strip" id="warnStrip">⚠ Tab switch detected — flagged in your proctor report</div>
+
+  <div class="split">
+    <div class="sb">
+      <div class="sb-sec">
+        <div class="sb-lbl">Progress</div>
+        <div class="ring-row">
+          <svg class="ring-svg" width="52" height="52" viewBox="0 0 52 52">
+            <circle class="rb" cx="26" cy="26" r="21"/>
+            <circle class="rf" id="ringFill" cx="26" cy="26" r="21"
+              stroke-dasharray="131.9" stroke-dashoffset="131.9"/>
+          </svg>
+          <div>
+            <div class="rn" id="ringPct">0%</div>
+            <div class="rs">Complete</div>
+          </div>
+        </div>
+        <div class="stat">Module: <strong id="sbMod">—</strong></div>
+        <div class="stat">Questions: <strong id="sbQ">0 / 14</strong></div>
+        <div class="stat">Running score: <strong id="sbScore">—</strong></div>
+      </div>
+      <div class="sb-lbl" style="padding:11px 14px 3px;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)">Module Track</div>
+      <div class="ml" id="modList"></div>
+      <div class="sb-foot">
+        <div class="sname" id="sbName">—</div>
+        <div class="sid"  id="sbId">—</div>
+        <div class="sid"  id="sbOrg" style="margin-top:1px"></div>
+      </div>
+    </div>
+
+    <div class="chat">
+      <div class="phase-row">
+        <div class="ph-icon" id="phIcon">AI</div>
+        <div class="ph-t">
+          <strong id="phTitle">GiP Rwanda AI Examiner</strong>
+          <span id="phSub">Rwanda-context certification · Vision 2050</span>
+        </div>
+        <div class="ph-cnt" id="phCnt">Q — / 14</div>
+      </div>
+
+      <div class="msgs" id="msgs"></div>
+
+      <div class="inp-row">
+        <div class="inp-w">
+          <textarea class="ci" id="ci" rows="2"
+            placeholder="Type your answer here…"
+            onkeydown="handleKey(event)"
+            oninput="onInput()"></textarea>
+          <span class="cc" id="cc">0</span>
+        </div>
+        <button class="sbtn" id="sbtn" onclick="send()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ RESULTS ══════════════════ -->
+<div class="ov" id="resOv" style="display:none">
+  <div class="card res-card" id="resCard">
+    <div id="resInner"></div>
+    <div class="ract">
+      <button class="rb rb-pri" onclick="dlReport()">📄 Download Full Report</button>
+      <button class="rb rb-sec" id="retakeBtn" onclick="retake()" style="display:none">↩ Retake Exam</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  CONFIG — API endpoint (Vercel serverless function)
+// ══════════════════════════════════════════════════════
+const API_URL = '/api/examiner';   // ← Vercel routes this to api/examiner.js
+
+// ══════════════════════════════════════════════════════
+//  MODULE METADATA
+// ══════════════════════════════════════════════════════
+const MODS = [
+  {n:1,  s:'Market Analysis'},
+  {n:2,  s:'Local SEO'},
+  {n:3,  s:'Content Creation'},
+  {n:4,  s:'Knowledge Mgmt'},
+  {n:5,  s:'Prototyping'},
+  {n:6,  s:'Operations'},
+  {n:7,  s:'Customer CX'},
+  {n:8,  s:'Automation'},
+  {n:9,  s:'Financial Risk'},
+  {n:10, s:'Skill Transfer'},
+  {n:11, s:'LinkedIn B2B'},
+  {n:12, s:'Tool Directory'},
+  {n:13, s:'Transformation'},
+  {n:14, s:'Capstone'},
+];
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+const ST = {
+  student:   {name:'', id:'', org:''},
+  history:   [],
+  timerSec:  7200,
+  timerRef:  null,
+  tabFlags:  0,
+  qCount:    0,
+  curMod:    0,
+  modDone:   {},
+  finalJSON: null,
+  done:      false,
+  busy:      false,
+};
+
+// ══════════════════════════════════════════════════════
+//  REGISTRATION
+// ══════════════════════════════════════════════════════
+async function startExam() {
+  const name = document.getElementById('rName').value.trim();
+  const id   = document.getElementById('rId').value.trim();
+  const org  = document.getElementById('rOrg').value.trim();
+  if (!name || !id) { showErr('Please enter your full name and student ID.'); return; }
+  if (!document.getElementById('cons').checked) { showErr('Please accept the examination rules.'); return; }
+
+  ST.student = {name, id, org};
+  const btn = document.getElementById('goBtn');
+  btn.disabled = true;
+  btn.textContent = 'Connecting to AI Examiner…';
+
+  // Test the API endpoint before hiding registration
+  try {
+    const test = await fetch(API_URL, {
+      method: 'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({messages:[{role:'user',content:'ping'}]})
+    });
+    if (!test.ok && test.status !== 200) {
+      const t = await test.text();
+      showErr(`API error ${test.status}: ${t.slice(0,120)} — Check your Vercel environment variable CLAUDE_API_KEY.`);
+      btn.disabled = false; btn.textContent = 'Begin Certification →'; return;
+    }
+  } catch(e) {
+    showErr(`Cannot reach /api/examiner: ${e.message}. Make sure you are running this on Vercel (not opening the file directly).`);
+    btn.disabled = false; btn.textContent = 'Begin Certification →'; return;
+  }
+
+  document.getElementById('regOv').style.display = 'none';
+  document.getElementById('appUI').style.display = 'flex';
+  document.getElementById('barSub').textContent = name + ' · Rwanda AI Mandate · Proctored';
+  document.getElementById('sbName').textContent = name;
+  document.getElementById('sbId').textContent   = id;
+  document.getElementById('sbOrg').textContent  = org;
+
+  buildSidebar();
+  startTimer();
+  setupProctor();
+  setTimeout(openExam, 400);
+}
+function showErr(msg) {
+  const el = document.getElementById('regErr');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════════
+//  SIDEBAR + PIPS
+// ══════════════════════════════════════════════════════
+function buildSidebar() {
+  const ml = document.getElementById('modList');
+  ml.innerHTML = '';
+  MODS.forEach(m => {
+    const d = document.createElement('div');
+    d.className = 'mi'; d.id = `mi-${m.n}`;
+    d.innerHTML = `<div class="mn" id="mn-${m.n}">${m.n}</div>
+      <div class="mname">${m.s}</div>
+      <div class="mscore" id="msc-${m.n}"></div>`;
+    ml.appendChild(d);
+  });
+  const pr = document.getElementById('pipRow');
+  pr.innerHTML = '';
+  MODS.forEach(m => {
+    const p = document.createElement('div');
+    p.className='pip'; p.id=`pip-${m.n}`; pr.appendChild(p);
+  });
+}
+
+function setActive(n) {
+  MODS.forEach(m => {
+    const el=document.getElementById(`mi-${m.n}`);
+    const mn=document.getElementById(`mn-${m.n}`);
+    const pp=document.getElementById(`pip-${m.n}`);
+    if(!el)return;
+    el.classList.remove('active');
+    if(!el.classList.contains('done')&&!el.classList.contains('fail')){
+      mn.classList.remove('active'); pp&&pp.classList.remove('active');
+    }
+  });
+  const el=document.getElementById(`mi-${n}`);
+  const mn=document.getElementById(`mn-${n}`);
+  const pp=document.getElementById(`pip-${n}`);
+  if(el&&!el.classList.contains('done')&&!el.classList.contains('fail')){
+    el.classList.add('active'); mn.classList.add('active');
+    pp&&pp.classList.add('active');
+  }
+  const mod = MODS.find(m=>m.n===n);
+  document.getElementById('sbMod').textContent = mod ? `M${n}: ${mod.s}` : '—';
+}
+
+function markDone(n) {
+  const el=document.getElementById(`mi-${n}`);
+  const mn=document.getElementById(`mn-${n}`);
+  const pp=document.getElementById(`pip-${n}`);
+  if(!el)return;
+  el.classList.remove('active'); el.classList.add('done');
+  mn.classList.remove('active'); mn.classList.add('done'); mn.textContent='✓';
+  pp&&pp.classList.remove('active'); pp&&pp.classList.add('done');
+}
+
+function updateProgress() {
+  const pct = Math.round((ST.qCount/14)*100);
+  const total=131.9, offset=total-(total*pct/100);
+  document.getElementById('ringFill').style.strokeDashoffset=offset;
+  document.getElementById('ringPct').textContent=pct+'%';
+  document.getElementById('sbQ').textContent=`${ST.qCount} / 14`;
+  document.getElementById('phCnt').textContent=`Q ${ST.qCount} / 14`;
+}
+
+// ══════════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════════
+function startTimer() {
+  ST.timerRef = setInterval(()=>{
+    ST.timerSec--;
+    const h=Math.floor(ST.timerSec/3600);
+    const m=Math.floor((ST.timerSec%3600)/60);
+    const s=ST.timerSec%60;
+    const el=document.getElementById('timerEl');
+    el.textContent=`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    el.className='timer';
+    if(ST.timerSec<=1800) el.className='timer warn';
+    if(ST.timerSec<=600)  el.className='timer crit';
+    if(ST.timerSec<=0){ clearInterval(ST.timerRef); timeUp(); }
+  },1000);
+}
+async function timeUp(){
+  addMsg('ai','<p>⏰ <strong>Time has elapsed.</strong> Your examination has been automatically submitted for final assessment.</p>');
+  await delay(1200);
+  await ask('The exam timer has expired. Please provide the final written assessment and the JSON output based on all answers received. Do this now regardless of how many modules were covered.');
+}
+
+// ══════════════════════════════════════════════════════
+//  PROCTOR
+// ══════════════════════════════════════════════════════
+function setupProctor(){
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden && !ST.done){
+      ST.tabFlags++;
+      const s=document.getElementById('warnStrip');
+      s.style.display='flex';
+      s.textContent=`⚠ Tab switch ${ST.tabFlags} detected — logged in your proctor report`;
+      setTimeout(()=>s.style.display='none',5000);
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  MESSAGES
+// ══════════════════════════════════════════════════════
+function addMsg(role, html){
+  const el=document.getElementById('msgs');
+  const w=document.createElement('div');
+  w.className=`msg ${role}`;
+  const init = role==='ai' ? 'GiP' :
+    ST.student.name.split(' ').map(c=>c[0]).join('').slice(0,2).toUpperCase();
+  w.innerHTML=`<div class="av">${init}</div><div class="bub">${html}</div>`;
+  el.appendChild(w); el.scrollTop=el.scrollHeight;
+  return w;
+}
+function showTyping(){
+  const el=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.className='msg ai'; d.id='typdot';
+  d.innerHTML=`<div class="av">GiP</div>
+    <div class="bub"><div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
+}
+function rmTyping(){ const e=document.getElementById('typdot'); if(e)e.remove(); }
+function setInput(on){
+  document.getElementById('ci').disabled=!on;
+  document.getElementById('sbtn').disabled=!on;
+  if(on) document.getElementById('ci').focus();
+}
+
+// ══════════════════════════════════════════════════════
+//  CLAUDE API CALL (via Vercel serverless proxy)
+// ══════════════════════════════════════════════════════
+async function ask(userMsg, isInternal=false){
+  if(!isInternal) ST.history.push({role:'user',content:userMsg});
+  setInput(false);
+  showTyping();
+  ST.busy=true;
+
+  try {
+    const res = await fetch(API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ messages: ST.history }),
+    });
+    rmTyping();
+
+    if(!res.ok){
+      const e=await res.text();
+      addMsg('ai',`<p style="color:#ff6b6b">⚠ Server error ${res.status}. ${e.slice(0,200)}</p>`);
+      setInput(true); ST.busy=false; return;
+    }
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    ST.history.push({role:'assistant',content:text});
+    ST.busy=false;
+
+    // Detect which module AI is now on
+    detectMod(text);
+
+    // Detect final JSON
+    const jm = text.match(/```json([\s\S]*?)```/);
+    if(jm){
+      try{
+        ST.finalJSON=JSON.parse(jm[1].trim());
+        ST.done=true;
+        clearInterval(ST.timerRef);
+      }catch(_){}
+    }
+
+    addMsg('ai', render(text));
+
+    if(ST.done && ST.finalJSON){
+      await delay(1000);
+      showResults();
+    } else {
+      setInput(true);
+    }
+
+  } catch(err){
+    rmTyping(); ST.busy=false;
+    addMsg('ai',`<p style="color:#ff6b6b">⚠ Connection error: ${err.message}</p>`);
+    setInput(true);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  MODULE DETECTION from AI text
+// ══════════════════════════════════════════════════════
+function detectMod(text){
+  const nums=[];
+  const re=/module\s+(\d+)/gi; let m;
+  while((m=re.exec(text))!==null){ const n=parseInt(m[1]); if(n>=1&&n<=14) nums.push(n); }
+  // Also detect "proceeding to" / "moving on to"
+  const re2=/(?:proceeding|moving)\s+(?:to|on)\s+module\s+(\d+)/gi;
+  while((m=re2.exec(text))!==null){ const n=parseInt(m[1]); if(n>=1&&n<=14) nums.push(n); }
+
+  if(nums.length>0){
+    const maxN=Math.max(...nums);
+    if(maxN > ST.curMod){
+      if(ST.curMod>0) markDone(ST.curMod);
+      ST.curMod=maxN;
+      setActive(maxN);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER bubble text
+// ══════════════════════════════════════════════════════
+function render(raw){
+  let t=raw;
+  // Remove JSON block (shown separately in results)
+  t=t.replace(/```json[\s\S]*?```/g,'').trim();
+  // Bold, italic
+  t=t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  t=t.replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
+  // Rwanda place names
+  t=t.replace(/\b(Rwanda|Kigali|RWF|EAC|Vision 2050|Irembo|RwandAir|Bank of Kigali|Gisenyi|Musanze|Rubavu|MTN Rwanda|Rwamagana|Nyamata)\b/g,'<strong>$1</strong>');
+  // Paragraphs
+  t=t.replace(/\n\n+/g,'</p><p>');
+  t=t.replace(/\n/g,'<br>');
+  return `<p>${t}</p>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  OPEN EXAM
+// ══════════════════════════════════════════════════════
+async function openExam(){
+  ST.curMod=1;
+  setActive(1);
+  const opener=`I am ready to begin the GiP Rwanda AI Architect Certification Examination. My name is ${ST.student.name}. Please welcome me and begin with Module 1.`;
+  await ask(opener);
+}
+
+// ══════════════════════════════════════════════════════
+//  SEND
+// ══════════════════════════════════════════════════════
+async function send(){
+  if(ST.busy||ST.done) return;
+  const el=document.getElementById('ci');
+  const txt=el.value.trim();
+  if(!txt) return;
+  el.value=''; onInput(); setInput(false);
+  ST.qCount++;
+  updateProgress();
+  addMsg('user',`<p>${esc(txt)}</p>`);
+  await ask(txt);
+}
+function handleKey(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
+function onInput(){
+  const ta=document.getElementById('ci');
+  document.getElementById('cc').textContent=ta.value.length;
+  ta.style.height='auto';
+  ta.style.height=Math.min(ta.scrollHeight,120)+'px';
+}
+
+// ══════════════════════════════════════════════════════
+//  RESULTS
+// ══════════════════════════════════════════════════════
+function showResults(){
+  const j=ST.finalJSON||{};
+  const passed=(j.result==='PASS');
+  const score=j.score_percentage||0;
+  const rl=j.rwanda_readiness_level||'Medium';
+  const grade=j.grade||(passed?'Pass':'Not Yet Competent');
+
+  const rbHtml = rl==='High'
+    ? '<span class="rb-badge rb-h">🇷🇼 Rwanda Readiness: High</span>'
+    : rl==='Medium'
+    ? '<span class="rb-badge rb-m">🇷🇼 Rwanda Readiness: Medium</span>'
+    : '<span class="rb-badge rb-l">🇷🇼 Rwanda Readiness: Low</span>';
+
+  const strengths=(j.strengths||[]).map(s=>`<li>${esc(s)}</li>`).join('');
+  const weaknesses=(j.weaknesses||[]).map(w=>`<li>${esc(w)}</li>`).join('');
+
+  let cert='';
+  if(passed){
+    cert=`<div class="cert">
+      <div class="cert-stars">★ ★ ★</div>
+      <div class="cert-title">Certificate of Achievement</div>
+      <div class="cert-name">${esc(ST.student.name)}</div>
+      <div class="cert-prog">GiP Rwanda AI Architect &amp; Strategic Advisor<br>National AI Mandate Programme · Vision 2050</div>
+      <div class="cert-date">Issued ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})} · Score: ${score}% · ${esc(grade)}</div>
+      ${ST.tabFlags?`<div style="color:var(--red);font-size:11px;margin-top:6px">⚠ ${ST.tabFlags} tab switch(es) logged</div>`:''}
+    </div>`;
+  }
+
+  const jsonDisplay=JSON.stringify(j,null,2);
+
+  // Build module score grid from what we know
+  let modGrid='<div class="msg-grid">';
+  MODS.forEach(m=>{
+    const el=document.getElementById(`mi-${m.n}`);
+    const isDone=el&&el.classList.contains('done');
+    const cls=isDone?'p':'';
+    modGrid+=`<div class="mc ${cls}">
+      <div class="mc-n">M${m.n}</div>
+      <div class="mc-s">${isDone?'✓':'—'}</div>
+    </div>`;
+  });
+  modGrid+='</div>';
+
+  document.getElementById('resInner').innerHTML=`
+    <div style="text-align:center;margin-bottom:16px">
+      <div class="gc ${passed?'gc-p':'gc-f'}">
+        <div class="gc-s">${score}%</div>
+        <div class="gc-l">Final Score</div>
+      </div>
+      <div class="verdict ${passed?'vp':'vf'}">${passed?'CERTIFIED ✓':'NOT YET CERTIFIED'}</div>
+      <div class="gtag">${esc(grade)} · ${esc(ST.student.name)}</div>
+      <div style="margin-top:7px">${rbHtml}</div>
+      ${ST.tabFlags?`<div style="color:var(--red);font-size:12px;margin-top:5px">⚠ ${ST.tabFlags} proctor flag(s) recorded</div>`:''}
+    </div>
+    ${cert}
+    ${modGrid}
+    ${strengths?`<div class="res-lbl green">Strengths</div><ul class="res-list">${strengths}</ul>`:''}
+    ${weaknesses?`<div class="res-lbl gold">Areas to Strengthen</div><ul class="res-list">${weaknesses}</ul>`:''}
+    ${j.recommendation?`<div class="rec-box">${esc(j.recommendation)}</div>`:''}
+    <div class="res-lbl muted">System JSON Output (for Wix / backend integration)</div>
+    <div class="jblk">${esc(jsonDisplay)}</div>
+  `;
+
+  if(!passed) document.getElementById('retakeBtn').style.display='block';
+  document.getElementById('resOv').style.display='flex';
+}
+
+// ══════════════════════════════════════════════════════
+//  DOWNLOAD REPORT
+// ══════════════════════════════════════════════════════
+function dlReport(){
+  const j=ST.finalJSON||{};
+  const timeUsed=Math.floor((7200-ST.timerSec)/60);
+  const lines=[
+    '═══════════════════════════════════════════════════════════════════',
+    '  GiP RWANDA — AI ARCHITECT CERTIFICATION EXAMINATION REPORT',
+    '═══════════════════════════════════════════════════════════════════',
+    `  Student:          ${ST.student.name}`,
+    `  ID / Email:       ${ST.student.id}`,
+    `  Organisation:     ${ST.student.org}`,
+    `  Date:             ${new Date().toLocaleDateString()}`,
+    `  Time Used:        ${timeUsed} minutes`,
+    `  Tab Flags:        ${ST.tabFlags}`,
+    '',
+    '  FINAL RESULT',
+    '  ─────────────────────────────────────────────────────────────────',
+    `  Score:            ${j.score_percentage||'—'}%`,
+    `  Result:           ${j.result||'—'}`,
+    `  Grade:            ${j.grade||'—'}`,
+    `  Rwanda Readiness: ${j.rwanda_readiness_level||'—'}`,
+    `  Recommendation:   ${j.recommendation||'—'}`,
+    '',
+    '  STRENGTHS',
+    '  ─────────────────────────────────────────────────────────────────',
+    ...(j.strengths||[]).map(s=>`  • ${s}`),
+    '',
+    '  AREAS TO STRENGTHEN',
+    '  ─────────────────────────────────────────────────────────────────',
+    ...(j.weaknesses||[]).map(w=>`  • ${w}`),
+    '',
+    '═══════════════════════════════════════════════════════════════════',
+    '  FULL CONVERSATION TRANSCRIPT',
+    '═══════════════════════════════════════════════════════════════════',
+    '',
+    ...ST.history.map((h,i)=>`[${h.role.toUpperCase()} — Turn ${i+1}]\n${h.content}\n${'─'.repeat(60)}\n`),
+    '',
+    '═══════════════════════════════════════════════════════════════════',
+    '  SYSTEM JSON OUTPUT',
+    '═══════════════════════════════════════════════════════════════════',
+    '',
+    JSON.stringify(j,null,2),
+  ];
+  const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`GiP_Rwanda_Exam_${ST.student.name.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+}
+
+function retake(){ location.reload(); }
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>

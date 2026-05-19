@@ -85,8 +85,7 @@ export default async function handler(req, res) {
         'Content-Type':      'application/json',
         'x-api-key':         apiKey,
         'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
+      },body: JSON.stringify({
   model: 'claude-3-haiku-20240307',
   max_tokens: 1500,
   system: SYSTEM_PROMPT,
